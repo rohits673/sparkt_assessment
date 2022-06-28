@@ -21,6 +21,18 @@ class UserProvider with ChangeNotifier {
 
   List<User> get users => _users;
 
+  User _selectedUser = const User(
+      firstName: "Emma",
+      lastName: "Wong",
+      avatar: "https://reqres.in/img/faces/3-image.jpg");
+
+  User get selectedUser => _selectedUser;
+
+  void setSelected(User user) {
+    _selectedUser = user;
+    notifyListeners();
+  }
+
   Future loadUsers() async {
     final response =
         await http.get(Uri.parse('https://reqres.in/api/users?per_page=12'));
