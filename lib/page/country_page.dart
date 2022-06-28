@@ -114,6 +114,7 @@ class _CountryPageState extends State<CountryPage> {
   }
 
   void selectCountry(Country country) {
-    Navigator.pop(context, country);
+    context.read<CountryProvider>().setSelected(country);
+    Navigator.pop(context);
   }
 }

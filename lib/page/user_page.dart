@@ -96,6 +96,7 @@ class _UserPageState extends State<UserPage> {
   }
 
   void selectUser(User user) {
-    Navigator.pop(context, user);
+    context.read<UserProvider>().setSelected(user);
+    Navigator.pop(context);
   }
 }

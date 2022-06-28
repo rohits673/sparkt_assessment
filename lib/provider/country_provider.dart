@@ -22,6 +22,16 @@ class CountryProvider with ChangeNotifier {
 
   List<Country> get countries => _countries;
 
+  Country _selectedCountry =
+      Country(flag: "https://flagcdn.com/w320/in.png", name: "India");
+
+  Country get selectedCountry => _selectedCountry;
+
+  void setSelected(Country user) {
+    _selectedCountry = user;
+    notifyListeners();
+  }
+
   Future loadCountries() async {
     final response =
         await http.get(Uri.parse('https://restcountries.com/v3.1/all'));

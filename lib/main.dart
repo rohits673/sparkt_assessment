@@ -46,116 +46,111 @@ class MyApp extends StatelessWidget {
       );
 }
 
-class MainPage extends StatefulWidget {
+class MainPage extends StatelessWidget {
   const MainPage({Key? key}) : super(key: key);
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  Widget build(BuildContext context) {
+    User? user;
+    Country? country;
+
+    Widget buildUserDropdown(UserProvider data) {
+      onTap() {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const UserPage()),
+        );
+      }
+
+      user = data.selectedUser;
+      return buildDropDownPicker(
+        title: "Select User",
+        child: user == null
+            ? buildListTile(title: "select user ", onTap: onTap)
+            : buildListTile(
+                title: user!.firstName,
+                leading: AvatarWidget(imageUrl: user!.avatar),
+                onTap: onTap,
+              ),
+      );
+    }
+
+    Widget buildCountryDropdown(CountryProvider data) {
+      onTap() {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const CountryPage()),
+        );
+      }
+
+      country = data.selectedCountry;
+      return buildDropDownPicker(
+        title: 'Select Country',
+        child: country == null
+            ? buildListTile(title: "select country", onTap: onTap)
+            : buildListTile(
+                title: country!.name,
+                leading: AvatarWidget(imageUrl: country!.flag),
+                onTap: onTap,
+              ),
+      );
+    }
+
+    return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Consumer<UserProvider>(
+              builder: (context, data, child) => buildUserDropdown(data),
+            ),
+            const SizedBox(height: 24),
+            Consumer<CountryProvider>(
+              builder: (context, data, child) => buildCountryDropdown(data),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _MainPageState extends State<MainPage> {
-  User? user;
-  Country? country;
+Widget buildListTile({
+  required String title,
+  required VoidCallback onTap,
+  Widget? leading,
+}) {
+  return ListTile(
+    onTap: onTap,
+    leading: leading,
+    title: Text(
+      title,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: const TextStyle(color: Colors.black, fontSize: 18),
+    ),
+    trailing: const Icon(Icons.arrow_drop_down, color: Colors.black),
+  );
+}
 
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
-        body: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildUserDropdown(),
-              const SizedBox(height: 24),
-              buildCountryDropdown(),
-            ],
+Widget buildDropDownPicker({
+  required String title,
+  required Widget child,
+}) =>
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
           ),
         ),
-      );
-
-  Widget buildUserDropdown() {
-    onTap() async {
-      final user = await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const UserPage()),
-      );
-
-      if (user == null) return;
-
-      setState(() => this.user = user);
-    }
-
-    return buildDropDownPicker(
-      title: "Select User",
-      child: user == null
-          ? buildListTile(title: "select user ", onTap: onTap)
-          : buildListTile(
-              title: user!.firstName,
-              leading: AvatarWidget(imageUrl: user!.avatar),
-              onTap: onTap,
-            ),
+        const SizedBox(height: 12),
+        Card(margin: EdgeInsets.zero, child: child),
+      ],
     );
-  }
-
-  Widget buildCountryDropdown() {
-    onTap() async {
-      final country = await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const CountryPage()),
-      );
-
-      if (country == null) return;
-
-      setState(() => this.country = country);
-    }
-
-    return buildDropDownPicker(
-      title: 'Select Country',
-      child: country == null
-          ? buildListTile(title: "select country", onTap: onTap)
-          : buildListTile(
-              title: country!.name,
-              leading: AvatarWidget(imageUrl: country!.flag),
-              onTap: onTap,
-            ),
-    );
-  }
-
-  Widget buildListTile({
-    required String title,
-    required VoidCallback onTap,
-    Widget? leading,
-  }) {
-    return ListTile(
-      onTap: onTap,
-      leading: leading,
-      title: Text(
-        title,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: const TextStyle(color: Colors.black, fontSize: 18),
-      ),
-      trailing: const Icon(Icons.arrow_drop_down, color: Colors.black),
-    );
-  }
-
-  Widget buildDropDownPicker({
-    required String title,
-    required Widget child,
-  }) =>
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Card(margin: EdgeInsets.zero, child: child),
-        ],
-      );
-}
